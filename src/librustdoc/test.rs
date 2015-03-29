@@ -244,7 +244,11 @@ fn runtest(test: &str, cratename: &str, libs: SearchPaths,
                 panic!("test executable succeeded when it should have failed");
             } else if !should_panic && !out.status.success() {
                 panic!("test executable failed:\n{:?}",
-                      str::from_utf8(&out.stdout));
+                       str::from_utf8(if out.stderr.len() > 0 { 
+                                          &out.stderr
+                                      } else {
+                                          &out.stdout
+                                      }).unwrap_or(""));
             }
         }
     }
