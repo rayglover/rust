@@ -1854,15 +1854,11 @@ impl<'a, T> Iterator for BlockIter<T> where T: Iterator<Item=u32> {
             self.head_offset += u32::BITS;
         }
 
-        // from the current block, isolate the
-        // LSB and subtract 1, producing k:
-        // a block with a number of set bits
-        // equal to the index of the LSB
-        let k = (self.head & (!self.head + 1)) - 1;
+        let curr = self.head;
         // update block, removing the LSB
         self.head &= self.head - 1;
         // return offset + (index of LSB)
-        Some(self.head_offset + (u32::count_ones(k) as usize))
+        Some(self.head_offset + (u32::trailing_zeros(curr) as usize))
     }
 
     #[inline]
